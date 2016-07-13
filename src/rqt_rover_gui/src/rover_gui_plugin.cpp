@@ -23,6 +23,7 @@
 #include <QProgressDialog>
 #include <QStringList>
 #include <QLCDNumber>
+#include <QFileDialog>
 #include <QComboBox>
 #include <std_msgs/Float32.h>
 #include <std_msgs/UInt8.h>
@@ -126,6 +127,8 @@ namespace rqt_rover_gui
     connect(this, SIGNAL(updateObstacleCallCount(QString)), ui.perc_of_time_avoiding_obstacles, SLOT(setText(QString)));
     connect(this, SIGNAL(sendInfoLogMessage(QString)), this, SLOT(receiveInfoLogMessage(QString)));
     connect(this, SIGNAL(sendDiagLogMessage(QString)), this, SLOT(receiveDiagLogMessage(QString)));
+    connect(ui.custom_world_path_button, SIGNAL(pressed()), this, SLOT(customWorldButtonEventHandler()));
+    connect(ui.custom_distribution_radio_button, SIGNAL(toggled(bool)), this, SLOT(customWorldRadioButtonEventHandler(bool)));
 
     // Create a subscriber to listen for joystick events
     joystick_subscriber = nh.subscribe("/joy", 1000, &RoverGUIPlugin::joyEventHandler, this);
@@ -143,6 +146,9 @@ namespace rqt_rover_gui
     ui.map_frame->setDisplayEKFData(ui.ekf_checkbox->isChecked());
 
     ui.joystick_frame->setHidden(false);
+
+    ui.custom_world_path_button->setDisabled(true);
+    ui.custom_world_path_button->setStyleSheet("color: grey; border:2px solid grey;");
 
     ui.tab_widget->setCurrentIndex(0);
 
@@ -443,6 +449,51 @@ void RoverGUIPlugin::targetDropOffEventHandler(const ros::MessageEvent<const sen
     }
 }
 
+// Receives coordinates for all detected targets from camera
+void RoverGUIPlugin::targetCoordinateEventHandler(const ros::MessageEvent<const shared_messages::TagsImage> &event)
+{
+    const std::string& publisher_name = event.getPublisherName();
+    const ros::M_string& header = event.getConnectionHeader();
+    ros::Time receipt_time = event.getReceiptTime();
+
+    const shared_messages::TagsImageConstPtr& image = event.getMessage();
+
+    // Extract rover name from the message source
+    string topic = header.at("topic");
+    size_t found = topic.find("/targets");
+    string rover_name = topic.substr(1,found-1);
+
+    // Each pair will store an individual corner coordinate and the center coordinate
+    // for each april tag 
+    std::pair<double, double> c1;
+    std::pair<double, double> c2;
+    std::pair<double, double> c3;
+    std::pair<double, double> c4;
+    std::pair<double, double> center;
+
+    for(int i = 0; i < image->corners.size(); i++)
+    {
+        c1.first = image->corners[i].points[0].x;
+        c1.second = image->corners[i].points[0].y;
+
+        c2.first = image->corners[i].points[1].x;
+        c2.second = image->corners[i].points[1].y;
+
+        c3.first = image->corners[i].points[2].x;
+        c3.second = image->corners[i].points[2].y;
+
+        c4.first = image->corners[i].points[3].x;
+        c4.second = image->corners[i].points[3].y;
+
+        center.first = image->centers.points[i].x;
+        center.second = image->centers.points[i].y;
+
+        ui.camera_frame->addTarget(c1, c2, c3, c4, center);
+    }
+
+}
+
+
 // Receives and stores the status update messages from rovers
 void RoverGUIPlugin::statusEventHandler(const ros::MessageEvent<std_msgs::String const> &event)
 {
@@ -450,6 +501,8 @@ void RoverGUIPlugin::statusEventHandler(const ros::MessageEvent<std_msgs::String
     ros::Time receipt_time = event.getReceiptTime();
 
     // Extract rover name from the message source
+
+    // This method is used rather than reading the publisher name to accomodate teams that changed the node name.
     string topic = header.at("topic");
     size_t found = topic.find("/status");
     string rover_name = topic.substr(1,found-1);
@@ -607,6 +660,7 @@ void RoverGUIPlugin::pollRoversTimerEventHandler()
         ekf_subscribers[*it].shutdown();
         targetPickUpSubscribers[*it].shutdown();
         targetDropOffSubscribers[*it].shutdown();
+        targetCoordinateSubscribers[*it].shutdown();
 
         // Delete the subscribers
         status_subscribers.erase(*it);
@@ -615,6 +669,7 @@ void RoverGUIPlugin::pollRoversTimerEventHandler()
         ekf_subscribers.erase(*it);
         targetPickUpSubscribers.erase(*it);
         targetDropOffSubscribers.erase(*it);
+        targetCoordinateSubscribers.erase(*it);
         
         // Shudown Publishers
         control_mode_publishers[*it].shutdown();
@@ -716,6 +771,7 @@ void RoverGUIPlugin::pollRoversTimerEventHandler()
         gps_subscribers[*i] = nh.subscribe("/"+*i+"/odom/navsat", 10, &RoverGUIPlugin::GPSEventHandler, this);
         targetPickUpSubscribers[*i] = nh.subscribe("/"+*i+"/targetPickUpImage", 10, &RoverGUIPlugin::targetPickUpEventHandler, this);
         targetDropOffSubscribers[*i] = nh.subscribe("/"+*i+"/targetDropOffImage", 10, &RoverGUIPlugin::targetDropOffEventHandler, this);
+        targetCoordinateSubscribers[*i] = nh.subscribe("/"+*i+"/targets", 10, &RoverGUIPlugin::targetCoordinateEventHandler, this);
 
         QString rover_status = "";
         // Build new ui rover list string
@@ -979,6 +1035,45 @@ void RoverGUIPlugin::allStopButtonEventHandler()
     ui.all_stop_button->setStyleSheet("color: grey; border:2px solid grey;");
 }
 
+// Get the path to the world file containing the custom distribution from the user
+void RoverGUIPlugin::customWorldButtonEventHandler()
+{
+    const char *name = "SWARMATHON_APP_ROOT";
+    char *app_root_cstr;
+    app_root_cstr = getenv(name);
+    QString app_root = QString(app_root_cstr) + "/simulation/worlds/";
+
+    QString path = QFileDialog::getOpenFileName(widget, tr("Open File"),
+                                                    app_root,
+                                                    tr("Gazebo World File (*.world)"));
+
+    sim_mgr.setCustomWorldPath(path);
+    emit sendInfoLogMessage("User selected custom world path: " + path);
+
+    // Extract the base filename for short display
+    QFileInfo fi=path;
+    ui.custom_world_path->setText(fi.baseName());
+}
+
+// Enable or disable custom distributions
+void RoverGUIPlugin::customWorldRadioButtonEventHandler(bool toggled)
+{
+    ui.custom_world_path_button->setEnabled(toggled);
+
+    // Set the button color to reflect whether or not it is disabled
+    // Clear the sim path if custom distribution it deselected
+    if( toggled )
+    {
+        ui.custom_world_path_button->setStyleSheet("color: white; border:2px solid white;");
+    }
+    else
+    {
+        sim_mgr.setCustomWorldPath("");
+        ui.custom_world_path->setText("");
+        ui.custom_world_path_button->setStyleSheet("color: grey; border:2px solid grey;");
+    }
+}
+
 void RoverGUIPlugin::buildSimulationButtonEventHandler()
 {
     emit sendInfoLogMessage("Building simulation...");
@@ -1233,6 +1328,10 @@ void RoverGUIPlugin::clearSimulationButtonEventHandler()
 
     for (map<string,ros::Subscriber>::iterator it=targetDropOffSubscribers.begin(); it!=targetDropOffSubscribers.end(); ++it) it->second.shutdown();
     targetDropOffSubscribers.clear();
+
+    for (map<string,ros::Subscriber>::iterator it=targetCoordinateSubscribers.begin(); it!=targetCoordinateSubscribers.end(); ++it) it->second.shutdown();
+    targetCoordinateSubscribers.clear();
+
     camera_subscriber.shutdown();
 
     emit sendInfoLogMessage("Shutting down publishers...");
