@@ -1,0 +1,147 @@
+No name selected. Default is: house_laptop_1
+No Name Selected. Default is: house_laptop_1
+No Name Selected. Default is: house_laptop_1
+No Name Selected. Default is: house_laptop_1
+No Name Selected. Default is: house_laptop_1
+VIDIOC_QUERYMENU: Invalid argument
+VIDIOC_QUERYMENU: Invalid argument
+VIDIOC_QUERYMENU: Invalid argument
+terminate called after throwing an instance of 'boost::exception_detail::clone_impl<boost::exception_detail::error_info_injector<boost::lock_error> >'
+  what():  boost: mutex lock failed in pthread_mutex_lock: Invalid argument
+No name selected. Default is: house_laptop_1
+[31m[ERROR] [1468515866.785590137]: [registerPublisher] Failed to contact master at [house_laptop_1:11311].  Retrying...[0m
+No Name Selected. Default is: house_laptop_1
+[31m[ERROR] [1468515866.790645723]: [registerPublisher] Failed to contact master at [house_laptop_1:11311].  Retrying...[0m
+[31m[ERROR] [1468515866.820263828]: [registerPublisher] Failed to contact master at [house_laptop_1:11311].  Retrying...[0m
+No Name Selected. Default is: house_laptop_1
+[31m[ERROR] [1468515866.850650902]: [registerPublisher] Failed to contact master at [house_laptop_1:11311].  Retrying...[0m
+No Name Selected. Default is: house_laptop_1
+[31m[ERROR] [1468515866.936260947]: [registerPublisher] Failed to contact master at [house_laptop_1:11311].  Retrying...[0m
+[31m[ERROR] [1468515866.944531520]: [setParam] Failed to contact master at [house_laptop_1:11311].  Retrying...[0m
+[31m[ERROR] [1468515867.337424505]: [setParam] Failed to contact master at [house_laptop_1:11311].  Retrying...[0m
+[0m[ INFO] [1468515888.822290648]: Connected to master at [house_laptop_1:11311][0m
+No Name Selected. Default is: house_laptop_1
+VIDIOC_QUERYMENU: Invalid argument
+VIDIOC_QUERYMENU: Invalid argument
+VIDIOC_QUERYMENU: Invalid argument
+[31m[ERROR] [1468515990.442414508]: Client [/house_laptop_1_LOCATION_MONTER] wants topic /house_laptop_1/targets to have datatype/md5sum [geometry_msgs/Polygon/cd60a26494a087f577976f0329fa120e], but our version has [shared_messages/TagsImage/a5280f56e540c51487d40c25152aca42]. Dropping connection.[0m
+[31m[ERROR] [1468516141.909692701]: Client [/house_laptop_1_LOCATION_MONTER] wants topic /house_laptop_1/targets to have datatype/md5sum [geometry_msgs/Polygon/cd60a26494a087f577976f0329fa120e], but our version has [shared_messages/TagsImage/a5280f56e540c51487d40c25152aca42]. Dropping connection.[0m
+[31m[ERROR] [1468516735.529516195]: Client [/house_laptop_1_LOCATION_MONTER] wants topic /house_laptop_1/targets to have datatype/md5sum [geometry_msgs/Polygon/cd60a26494a087f577976f0329fa120e], but our version has [shared_messages/TagsImage/a5280f56e540c51487d40c25152aca42]. Dropping connection.[0m
+[31m[ERROR] [1468517239.229853600]: Client [/house_laptop_1_LOCATION_MONTER] wants topic /house_laptop_1/targets to have datatype/md5sum [geometry_msgs/Polygon/cd60a26494a087f577976f0329fa120e], but our version has [shared_messages/TagsImage/a5280f56e540c51487d40c25152aca42]. Dropping connection.[0m
+[31m[ERROR] [1468517276.598858997]: Client [/house_laptop_1_LOCATION_MONTER] wants topic /house_laptop_1/targets to have datatype/md5sum [geometry_msgs/Polygon/cd60a26494a087f577976f0329fa120e], but our version has [shared_messages/TagsImage/a5280f56e540c51487d40c25152aca42]. Dropping connection.[0m
+[31m[ERROR] [1468517319.276113269]: Client [/house_laptop_1_LOCATION_MONTER] wants topic /house_laptop_1/targets to have datatype/md5sum [geometry_msgs/Polygon/cd60a26494a087f577976f0329fa120e], but our version has [shared_messages/TagsImage/a5280f56e540c51487d40c25152aca42]. Dropping connection.[0m
+[31m[ERROR] [1468517469.628965271]: Client [/house_laptop_1_LOCATION_MONTER] wants topic /house_laptop_1/targets to have datatype/md5sum [geometry_msgs/Polygon/cd60a26494a087f577976f0329fa120e], but our version has [shared_messages/TagsImage/a5280f56e540c51487d40c25152aca42]. Dropping connection.[0m
+[31m[ERROR] [1468517534.336088932]: Client [/house_laptop_1_LOCATION_MONTER] wants topic /house_laptop_1/targets to have datatype/md5sum [geometry_msgs/Polygon/cd60a26494a087f577976f0329fa120e], but our version has [shared_messages/TagsImage/a5280f56e540c51487d40c25152aca42]. Dropping connection.[0m
+[31m[ERROR] [1468517545.255748952]: Client [/house_laptop_1_LOCATION_MONTER] wants topic /house_laptop_1/targets to have datatype/md5sum [geometry_msgs/Polygon/cd60a26494a087f577976f0329fa120e], but our version has [shared_messages/TagsImage/a5280f56e540c51487d40c25152aca42]. Dropping connection.[0m
+[0m[ INFO] [1468515888.812116549]: Connected to master at [house_laptop_1:11311][0m
+[33m[ WARN] [1468519177.038459394]: Shutdown request received.[0m
+[33m[ WARN] [1468519177.038514766]: Reason given for shutdown: [user request][0m
+[0m[ INFO] [1468515888.809058596]: Connected to master at [house_laptop_1:11311][0m
+[33m[ WARN] [1468519177.039039140]: Shutdown request received.[0m
+[33m[ WARN] [1468519177.039074193]: Reason given for shutdown: [user request][0m
+[0m[ INFO] [1468515888.805558112]: Connected to master at [house_laptop_1:11311][0m
+[33m[ WARN] [1468519177.048459382]: Shutdown request received.[0m
+[33m[ WARN] [1468519177.048504807]: Reason given for shutdown: [user request][0m
+[0m[ INFO] [1468515888.799400349]: Connected to master at [house_laptop_1:11311][0m
+[33m[ WARN] [1468519177.049275470]: Shutdown request received.[0m
+[33m[ WARN] [1468519177.049315929]: Reason given for shutdown: [user request][0m
+[33m[ WARN] [1468519177.037905469]: Shutdown request received.[0m
+[33m[ WARN] [1468519177.037946817]: Reason given for shutdown: [user request][0m
+[0m[ INFO] [1468515888.802869720]: Connected to master at [house_laptop_1:11311][0m
+[33m[ WARN] [1468519177.051875487]: Shutdown request received.[0m
+[33m[ WARN] [1468519177.051914895]: Reason given for shutdown: [user request][0m
+terminate called after throwing an instance of 'boost::exception_detail::clone_impl<boost::exception_detail::error_info_injector<boost::lock_error> >'
+  what():  boost: mutex lock failed in pthread_mutex_lock: Invalid argument
+[0m[ INFO] [1468515888.810494595]: Connected to master at [house_laptop_1:11311][0m
+[33m[ WARN] [1468519177.039585499]: Shutdown request received.[0m
+[33m[ WARN] [1468519177.039641505]: Reason given for shutdown: [user request][0m
+No Name Selected. Default is: house_laptop_1
+[31m[ERROR] [1468599259.216851735]: [setParam] Failed to contact master at [house_laptop_1:11311].  Retrying...[0m
+No name selected. Default is: house_laptop_1
+No Name Selected. Default is: house_laptop_1
+[31m[ERROR] [1468599259.254870342]: [registerPublisher] Failed to contact master at [house_laptop_1:11311].  Retrying...[0m
+[31m[ERROR] [1468599259.255357004]: [registerPublisher] Failed to contact master at [house_laptop_1:11311].  Retrying...[0m
+[31m[ERROR] [1468599259.257380983]: [registerPublisher] Failed to contact master at [house_laptop_1:11311].  Retrying...[0m
+[31m[ERROR] [1468599259.282652309]: [setParam] Failed to contact master at [house_laptop_1:11311].  Retrying...[0m
+[31m[ERROR] [1468599259.799832263]: [registerPublisher] Failed to contact master at [house_laptop_1:11311].  Retrying...[0m
+No Name Selected. Default is: house_laptop_1
+[31m[ERROR] [1468599259.828124486]: [registerPublisher] Failed to contact master at [house_laptop_1:11311].  Retrying...[0m
+[0m[ INFO] [1468599272.607631894]: Connected to master at [house_laptop_1:11311][0m
+No Name Selected. Default is: house_laptop_1
+VIDIOC_QUERYMENU: Invalid argument
+VIDIOC_QUERYMENU: Invalid argument
+VIDIOC_QUERYMENU: Invalid argument
+[31m[ERROR] [1468599327.103277643]: Client [/house_laptop_1_LOCATION_MONTER] wants topic /house_laptop_1/targets to have datatype/md5sum [geometry_msgs/Polygon/cd60a26494a087f577976f0329fa120e], but our version has [shared_messages/TagsImage/a5280f56e540c51487d40c25152aca42]. Dropping connection.[0m
+[31m[ERROR] [1468602372.069858339]: Client [/house_laptop_1_LOCATION_MONTER] wants topic /house_laptop_1/targets to have datatype/md5sum [geometry_msgs/Polygon/cd60a26494a087f577976f0329fa120e], but our version has [shared_messages/TagsImage/a5280f56e540c51487d40c25152aca42]. Dropping connection.[0m
+[31m[ERROR] [1468602400.815620449]: Client [/house_laptop_1_LOCATION_MONTER] wants topic /house_laptop_1/targets to have datatype/md5sum [geometry_msgs/Polygon/cd60a26494a087f577976f0329fa120e], but our version has [shared_messages/TagsImage/a5280f56e540c51487d40c25152aca42]. Dropping connection.[0m
+[31m[ERROR] [1468602534.741309800]: Client [/house_laptop_1_LOCATION_MONTER] wants topic /house_laptop_1/targets to have datatype/md5sum [geometry_msgs/Polygon/cd60a26494a087f577976f0329fa120e], but our version has [shared_messages/TagsImage/a5280f56e540c51487d40c25152aca42]. Dropping connection.[0m
+[31m[ERROR] [1468603094.927461751]: Client [/house_laptop_1_LOCATION_MONTER] wants topic /house_laptop_1/targets to have datatype/md5sum [geometry_msgs/Polygon/cd60a26494a087f577976f0329fa120e], but our version has [shared_messages/TagsImage/a5280f56e540c51487d40c25152aca42]. Dropping connection.[0m
+[0m[ INFO] [1468599272.611310484]: Connected to master at [house_laptop_1:11311][0m
+[33m[ WARN] [1468603304.164389750]: Shutdown request received.[0m
+[33m[ WARN] [1468603304.164432303]: Reason given for shutdown: [user request][0m
+[0m[ INFO] [1468599272.627610333]: Connected to master at [house_laptop_1:11311][0m
+[33m[ WARN] [1468603304.165059239]: Shutdown request received.[0m
+[33m[ WARN] [1468603304.165090578]: Reason given for shutdown: [user request][0m
+[0m[ INFO] [1468599272.612159387]: Connected to master at [house_laptop_1:11311][0m
+[33m[ WARN] [1468603304.160904285]: Shutdown request received.[0m
+[33m[ WARN] [1468603304.160946124]: Reason given for shutdown: [user request][0m
+[33m[ WARN] [1468603304.160006413]: Shutdown request received.[0m
+[33m[ WARN] [1468603304.160062618]: Reason given for shutdown: [user request][0m
+[0m[ INFO] [1468599272.643805187]: Connected to master at [house_laptop_1:11311][0m
+[33m[ WARN] [1468603304.161647939]: Shutdown request received.[0m
+[33m[ WARN] [1468603304.161687631]: Reason given for shutdown: [user request][0m
+[0m[ INFO] [1468599272.608779988]: Connected to master at [house_laptop_1:11311][0m
+[33m[ WARN] [1468603304.163745146]: Shutdown request received.[0m
+[33m[ WARN] [1468603304.163782129]: Reason given for shutdown: [user request][0m
+terminate called after throwing an instance of 'boost::exception_detail::clone_impl<boost::exception_detail::error_info_injector<boost::lock_error> >'
+  what():  boost: mutex lock failed in pthread_mutex_lock: Invalid argument
+[0m[ INFO] [1468599272.610656684]: Connected to master at [house_laptop_1:11311][0m
+[33m[ WARN] [1468603304.163011999]: Shutdown request received.[0m
+[33m[ WARN] [1468603304.163052975]: Reason given for shutdown: [user request][0m
+No Name Selected. Default is: house_laptop_1
+[31m[ERROR] [1468603804.638905382]: [registerPublisher] Failed to contact master at [house_laptop_1:11311].  Retrying...[0m
+No name selected. Default is: house_laptop_1
+[31m[ERROR] [1468603804.647660781]: [registerPublisher] Failed to contact master at [house_laptop_1:11311].  Retrying...[0m
+No Name Selected. Default is: house_laptop_1
+[31m[ERROR] [1468603804.689402043]: [registerPublisher] Failed to contact master at [house_laptop_1:11311].  Retrying...[0m
+[31m[ERROR] [1468603804.760435530]: [registerPublisher] Failed to contact master at [house_laptop_1:11311].  Retrying...[0m
+No Name Selected. Default is: house_laptop_1
+[31m[ERROR] [1468603804.777187303]: [registerPublisher] Failed to contact master at [house_laptop_1:11311].  Retrying...[0m
+[31m[ERROR] [1468603804.837514736]: [setParam] Failed to contact master at [house_laptop_1:11311].  Retrying...[0m
+[31m[ERROR] [1468603805.206742755]: [setParam] Failed to contact master at [house_laptop_1:11311].  Retrying...[0m
+[0m[ INFO] [1468603811.987294530]: Connected to master at [house_laptop_1:11311][0m
+No Name Selected. Default is: house_laptop_1
+VIDIOC_QUERYMENU: Invalid argument
+VIDIOC_QUERYMENU: Invalid argument
+VIDIOC_QUERYMENU: Invalid argument
+[31m[ERROR] [1468603820.206568468]: Client [/house_laptop_1_LOCATION_MONTER] wants topic /house_laptop_1/targets to have datatype/md5sum [geometry_msgs/Polygon/cd60a26494a087f577976f0329fa120e], but our version has [shared_messages/TagsImage/a5280f56e540c51487d40c25152aca42]. Dropping connection.[0m
+[31m[ERROR] [1468603959.112265517]: Client [/house_laptop_1_LOCATION_MONTER] wants topic /house_laptop_1/targets to have datatype/md5sum [geometry_msgs/Polygon/cd60a26494a087f577976f0329fa120e], but our version has [shared_messages/TagsImage/a5280f56e540c51487d40c25152aca42]. Dropping connection.[0m
+[31m[ERROR] [1468604236.945811474]: Client [/house_laptop_1_LOCATION_MONTER] wants topic /house_laptop_1/targets to have datatype/md5sum [geometry_msgs/Polygon/cd60a26494a087f577976f0329fa120e], but our version has [shared_messages/TagsImage/a5280f56e540c51487d40c25152aca42]. Dropping connection.[0m
+[31m[ERROR] [1468604302.249542968]: Client [/house_laptop_1_LOCATION_MONTER] wants topic /house_laptop_1/targets to have datatype/md5sum [geometry_msgs/Polygon/cd60a26494a087f577976f0329fa120e], but our version has [shared_messages/TagsImage/a5280f56e540c51487d40c25152aca42]. Dropping connection.[0m
+[31m[ERROR] [1468604371.155345689]: Client [/house_laptop_1_LOCATION_MONTER] wants topic /house_laptop_1/targets to have datatype/md5sum [geometry_msgs/Polygon/cd60a26494a087f577976f0329fa120e], but our version has [shared_messages/TagsImage/a5280f56e540c51487d40c25152aca42]. Dropping connection.[0m
+[31m[ERROR] [1468605808.371363950]: Client [/house_laptop_1_LOCATION_MONTER] wants topic /house_laptop_1/targets to have datatype/md5sum [geometry_msgs/Polygon/cd60a26494a087f577976f0329fa120e], but our version has [shared_messages/TagsImage/a5280f56e540c51487d40c25152aca42]. Dropping connection.[0m
+[31m[ERROR] [1468609119.717712252]: Client [/house_laptop_1_LOCATION_MONTER] wants topic /house_laptop_1/targets to have datatype/md5sum [geometry_msgs/Polygon/cd60a26494a087f577976f0329fa120e], but our version has [shared_messages/TagsImage/a5280f56e540c51487d40c25152aca42]. Dropping connection.[0m
+[31m[ERROR] [1468609213.383304426]: Client [/house_laptop_1_LOCATION_MONTER] wants topic /house_laptop_1/targets to have datatype/md5sum [geometry_msgs/Polygon/cd60a26494a087f577976f0329fa120e], but our version has [shared_messages/TagsImage/a5280f56e540c51487d40c25152aca42]. Dropping connection.[0m
+[31m[ERROR] [1468609314.164904233]: Client [/house_laptop_1_LOCATION_MONTER] wants topic /house_laptop_1/targets to have datatype/md5sum [geometry_msgs/Polygon/cd60a26494a087f577976f0329fa120e], but our version has [shared_messages/TagsImage/a5280f56e540c51487d40c25152aca42]. Dropping connection.[0m
+[0m[ INFO] [1468603812.020273384]: Connected to master at [house_laptop_1:11311][0m
+[33m[ WARN] [1468626804.466908187]: Shutdown request received.[0m
+[33m[ WARN] [1468626804.466955419]: Reason given for shutdown: [user request][0m
+[0m[ INFO] [1468603812.027662062]: Connected to master at [house_laptop_1:11311][0m
+[33m[ WARN] [1468626804.475754400]: Shutdown request received.[0m
+[33m[ WARN] [1468626804.475812076]: Reason given for shutdown: [user request][0m
+[0m[ INFO] [1468603812.005759806]: Connected to master at [house_laptop_1:11311][0m
+[33m[ WARN] [1468626804.476441857]: Shutdown request received.[0m
+[33m[ WARN] [1468626804.476474388]: Reason given for shutdown: [user request][0m
+[0m[ INFO] [1468603812.037173238]: Connected to master at [house_laptop_1:11311][0m
+[33m[ WARN] [1468626804.471413831]: Shutdown request received.[0m
+[33m[ WARN] [1468626804.471480094]: Reason given for shutdown: [user request][0m
+[0m[ INFO] [1468603812.022156064]: Connected to master at [house_laptop_1:11311][0m
+[33m[ WARN] [1468626804.474946217]: Shutdown request received.[0m
+[33m[ WARN] [1468626804.475002064]: Reason given for shutdown: [user request][0m
+terminate called after throwing an instance of 'boost::exception_detail::clone_impl<boost::exception_detail::error_info_injector<boost::lock_error> >'
+  what():  boost: mutex lock failed in pthread_mutex_lock: Invalid argument
+[0m[ INFO] [1468603812.020824464]: Connected to master at [house_laptop_1:11311][0m
+[33m[ WARN] [1468626804.473432878]: Shutdown request received.[0m
+[33m[ WARN] [1468626804.473517677]: Reason given for shutdown: [user request][0m
+[33m[ WARN] [1468626804.466276301]: Shutdown request received.[0m
+[33m[ WARN] [1468626804.466318652]: Reason given for shutdown: [user request][0m
