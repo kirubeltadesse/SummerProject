@@ -79,8 +79,9 @@ rosparam set /$HOSTNAME\_EKF/odom1_config [true,true,false,false,false,false,fal
 rosparam set /$HOSTNAME\_EKF/imu0_config [false,false,false,false,false,true,false,false,false,false,false,true,true,false,false]
 nohup rosrun robot_localization ekf_localization_node _two_d_mode:=true __name:=$HOSTNAME\_EKF /odometry/filtered:=/$HOSTNAME/odom/ekf &
 
-rosparam set tag_descriptions "[{id: 25, size: 0.037}]"
-nohup rosrun apriltags_ros apriltag_detector_node __ns:=/$HOSTNAME /image_rect:=/$HOSTNAME/camera/image /camera_info:=/usb_cam/camera_info &
+rosparam set /$HOSTNAME/apriltag_detector/tag_family "36h11"
+rosparam set /$HOSTNAME/apriltag_detector/tag_descriptions "[{id: 25, size: 0.037}, {id: 237, size: 0.037}, {id: 233, size: 0.037}, {id: 18, size: 0.037}]"
+nohup rosrun apriltags_ros apriltag_detector_node __ns:=/$HOSTNAME /$HOSTNAME/image_rect:=/$HOSTNAME/camera/image /camera_info:=/usb_cam/camera_info &
 
 
 #Wait for user input to terminate processes
