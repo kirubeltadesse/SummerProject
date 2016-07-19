@@ -1,8 +1,10 @@
 #!/bin/bash
-pkill camera
+#pkill camera
+pkill usb_cam
 pkill mobility
 pkill obstacle
 pkill target
+pkill apriltag_detector
 pkill abridge
 pkill ublox_gps
 pkill navsat_transform
@@ -44,7 +46,8 @@ findDevicePath() {
 
 
 #Startup ROS packages/processes
-nohup rosrun target_detection camera &
+#nohup rosrun target_detection camera &
+nohup rosrun usb_cam usb_cam_node  /usb_cam/image_raw:=/$HOSTNAME/camera/image  &
 nohup rosrun mobility mobility &
 nohup rosrun obstacle_detection obstacle &
 nohup rosrun target_detection target &
@@ -76,6 +79,9 @@ rosparam set /$HOSTNAME\_EKF/odom1_config [true,true,false,false,false,false,fal
 rosparam set /$HOSTNAME\_EKF/imu0_config [false,false,false,false,false,true,false,false,false,false,false,true,true,false,false]
 nohup rosrun robot_localization ekf_localization_node _two_d_mode:=true __name:=$HOSTNAME\_EKF /odometry/filtered:=/$HOSTNAME/odom/ekf &
 
+rosparam set tag_descriptions "[{id: 25, size: 0.037}]"
+nohup rosrun apriltags_ros apriltag_detector_node __ns:=/$HOSTNAME /image_rect:=/$HOSTNAME/camera/image /camera_info:=/usb_cam/camera_info &
+
 
 #Wait for user input to terminate processes
 while true; do
@@ -92,6 +98,8 @@ while true; do
 	rosnode kill $HOSTNAME\_OBSTACLE
 	rosnode kill $HOSTNAME\_TARGET
 	rosnode kill $HOSTNAME\_DIAGNOSTICS
+	rosnode kill $HOSTNAME\/apriltag_detector
+    rosnode kill \/usb_cam
 
 	exit 1
     fi
