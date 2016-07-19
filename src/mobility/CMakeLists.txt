@@ -9,10 +9,11 @@ find_package(catkin REQUIRED COMPONENTS
   random_numbers
   message_generation
   shared_messages
+  apriltags_ros
 )
 
 catkin_package(
-  CATKIN_DEPENDS geometry_msgs roscpp sensor_msgs std_msgs random_numbers message_runtime shared_messages
+  CATKIN_DEPENDS geometry_msgs roscpp sensor_msgs std_msgs random_numbers message_runtime shared_messages apriltags_ros
 )
 
 include_directories(

@@ -14,6 +14,7 @@
 #include <geometry_msgs/Pose2D.h>
 #include <geometry_msgs/Twist.h>
 #include <nav_msgs/Odometry.h>
+#include <apriltags_ros/AprilTagDetectionArray.h>
 
 //Custom messages
 #include <shared_messages/TagsImage.h>
@@ -85,7 +86,7 @@ void sigintEventHandler(int signal);
 //Callback handlers
 void joyCmdHandler(const sensor_msgs::Joy::ConstPtr& message);
 void modeHandler(const std_msgs::UInt8::ConstPtr& message);
-void targetHandler(const shared_messages::TagsImage::ConstPtr& tagInfo);
+void targetHandler(const apriltags_ros::AprilTagDetectionArray::ConstPtr& message);
 void obstacleHandler(const std_msgs::UInt8::ConstPtr& message);
 void odometryHandler(const nav_msgs::Odometry::ConstPtr& message);
 void mobilityStateMachine(const ros::TimerEvent&);
@@ -123,7 +124,7 @@ int main(int argc, char **argv) {
 
     joySubscriber = mNH.subscribe((publishedName + "/joystick"), 10, joyCmdHandler);
     modeSubscriber = mNH.subscribe((publishedName + "/mode"), 1, modeHandler);
-    targetSubscriber = mNH.subscribe((publishedName + "/targets"), 10, targetHandler);
+    targetSubscriber = mNH.subscribe((publishedName + "/tag_detections"), 10, targetHandler);
     obstacleSubscriber = mNH.subscribe((publishedName + "/obstacle"), 10, obstacleHandler);
     odometrySubscriber = mNH.subscribe((publishedName + "/odom/ekf"), 10, odometryHandler);
     targetsCollectedSubscriber = mNH.subscribe(("targetsCollected"), 10, targetsCollectedHandler);
@@ -268,14 +269,14 @@ void setVelocity(double linearVel, double angularVel)
  * ROS CALLBACK HANDLERS
  ************************/
 
-void targetHandler(const shared_messages::TagsImage::ConstPtr& message) {
+void targetHandler(const apriltags_ros::AprilTagDetectionArray::ConstPtr& message) {
 
 	//if this is the goal target
-	if (message->tags.data[0] == 256) {
+	if (message->detections[0].id == 256) {
 		//if we were returning with a target
 	    if (targetDetected.data != -1) {
 			//publish to scoring code
-			targetDropOffPublish.publish(message->image);
+			//targetDropOffPublish.publish(message->image);
 			targetDetected.data = -1;
 	    }
 	}
@@ -284,9 +285,9 @@ void targetHandler(const shared_messages::TagsImage::ConstPtr& message) {
 	else if (targetDetected.data == -1) {
         
         //check if target has not yet been collected
-        if (!targetsCollected[message->tags.data[0]]) {
+        if (!targetsCollected[message->detections[0].id]) {
 			//copy target ID to class variable
-			targetDetected.data = message->tags.data[0];
+			targetDetected.data = message->detections[0].id;
 			
 	        //set angle to center as goal heading
 			goalLocation.theta = M_PI + atan2(currentLocation.y, currentLocation.x);
@@ -299,7 +300,7 @@ void targetHandler(const shared_messages::TagsImage::ConstPtr& message) {
 			targetCollectedPublish.publish(targetDetected);
 
 			//publish to scoring code
-			targetPickUpPublish.publish(message->image);
+			//targetPickUpPublish.publish(message->image);
 
 			//switch to transform state to trigger return to center
 			stateMachineState = STATE_MACHINE_TRANSFORM;
