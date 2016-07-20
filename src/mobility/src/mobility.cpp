@@ -295,27 +295,17 @@ void targetHandler(const apriltags_ros::AprilTagDetectionArray::ConstPtr& messag
             //movingTowardsTag = true;
             targetDetected.data =  message->detections[0].id;
 
-            float x, y, distance;
+            // z is the 3D vector pointing to the april tag as a scalar value 
+            // x is the x value relative to the rover of the tag
+            // r is the vector projected to the ground as a 2D scalar value
+            float r, z, x;
+            z = message->detections[0].pose.pose.position.z;
             x = message->detections[0].pose.pose.position.x;
-            distance = message->detections[0].pose.pose.position.z;
-            y = sqrt( pow(distance, 2) - pow(cameraHeight, 2));
-            y = sqrt( pow(y, 2) - pow(x, 2));
+            r = sqrt( pow(z, 2) - pow(cameraHeight, 2));
 
-            // Account for rover center since x and y are relative to the camera
-            x = x  - 0.03;
-            y = y + 0.12;
-
-            // Convert to Northern Heading
-            float rotation_angle, magnitude;
-            magnitude = sqrt( pow(x, 2) + pow(y, 2));
-            rotation_angle = M_PI_2 - currentLocation.theta;
-            aprilTagLocation.x = magnitude * cos(rotation_angle);
-            aprilTagLocation.y = magnitude * sin(rotation_angle);
-
-            // Translate from relative to rover to relative to center
-            aprilTagLocation.x += currentLocation.x;
-            aprilTagLocation.y += currentLocation.y;
-            aprilTagLocation.theta = asin(currentLocation.theta + aprilTagLocation.x/magnitude);
+            aprilTagLocation.x = r * cos(currentLocation.theta) + currentLocation.x -0.03;
+            aprilTagLocation.y = r * sin(currentLocation.theta) + currentLocation.y + 0.12;
+            aprilTagLocation.theta = currentLocation.theta + asin(x / r);
 
             goalLocation.x =  aprilTagLocation.x;
             goalLocation.y = aprilTagLocation.y;
@@ -323,8 +313,6 @@ void targetHandler(const apriltags_ros::AprilTagDetectionArray::ConstPtr& messag
             
             ROS_ERROR_STREAM("manny Current Pose: (" << currentLocation.x << ", " << currentLocation.y << ", " << currentLocation.theta << ")");
             ROS_ERROR_STREAM("manny AprilTag Pose: (" << aprilTagLocation.x << ", " << aprilTagLocation.y << ", " << aprilTagLocation.theta << ")");
-            ROS_ERROR_STREAM("manny Distance from initial detection: (" << x << ", " << y << ")");
-            ROS_ERROR_STREAM("manny ZDistance from initial detection: " << distance);
             ROS_ERROR_STREAM("manny Tag ID: " << targetDetected.data);
             
         //}
