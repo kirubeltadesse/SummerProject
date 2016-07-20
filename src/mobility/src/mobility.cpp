@@ -305,7 +305,17 @@ void targetHandler(const apriltags_ros::AprilTagDetectionArray::ConstPtr& messag
 
             aprilTagLocation.x = r * cos(currentLocation.theta) + currentLocation.x -0.03;
             aprilTagLocation.y = r * sin(currentLocation.theta) + currentLocation.y + 0.12;
-            aprilTagLocation.theta = currentLocation.theta + asin(x / r);
+            aprilTagLocation.theta = currentLocation.theta - asin(x / r);
+
+            if(aprilTagLocation.theta > M_PI) {
+
+                aprilTagLocation.theta -= 2 * M_PI;
+
+            } else if(aprilTagLocation.theta < -1 * M_PI) {
+
+                aprilTagLocation.theta += 2 * M_PI;
+
+            }
 
             goalLocation.x =  aprilTagLocation.x;
             goalLocation.y = aprilTagLocation.y;
