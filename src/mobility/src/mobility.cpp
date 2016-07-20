@@ -290,15 +290,16 @@ void setVelocity(double linearVel, double angularVel)
 void targetHandler(const apriltags_ros::AprilTagDetectionArray::ConstPtr& message) {
 
     if(message->detections.size() > 0 && currentLocation.theta != 0) {
-        if(movingTowardsTag == false) {
+        //if(movingTowardsTag == false) {
 
-            movingTowardsTag = true;
+            //movingTowardsTag = true;
             targetDetected.data =  message->detections[0].id;
 
             float x, y, distance;
             x = message->detections[0].pose.pose.position.x;
             distance = message->detections[0].pose.pose.position.z;
             y = sqrt( pow(distance, 2) - pow(cameraHeight, 2));
+            y = sqrt( pow(y, 2) - pow(x, 2));
 
             // Account for rover center since x and y are relative to the camera
             x = x  - 0.03;
@@ -326,7 +327,7 @@ void targetHandler(const apriltags_ros::AprilTagDetectionArray::ConstPtr& messag
             ROS_ERROR_STREAM("manny ZDistance from initial detection: " << distance);
             ROS_ERROR_STREAM("manny Tag ID: " << targetDetected.data);
             
-        }
+        //}
         ////if this is the goal target
         //if (message->detections[0].id == 256) {
             ////if we were returning with a target
