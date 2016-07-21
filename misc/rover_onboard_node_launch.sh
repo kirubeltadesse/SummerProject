@@ -49,7 +49,7 @@ findDevicePath() {
 #nohup rosrun target_detection camera &
 nohup rosrun usb_cam usb_cam_node  /usb_cam/image_raw:=/$HOSTNAME/camera/image  &
 nohup rosrun mobility mobility &
-nohup rosrun obstacle_detection obstacle &
+#nohup rosrun obstacle_detection obstacle &
 nohup rosrun target_detection target &
 nohup rosrun diagnostics diagnostics &
 

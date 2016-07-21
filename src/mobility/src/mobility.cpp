@@ -46,6 +46,7 @@ float killSwitchTimeout = 10;
 std_msgs::Int16 targetDetected; //ID of the detected target
 bool targetsCollected [256] = {0}; //array of booleans indicating whether each target ID has been found
 bool movingTowardsTag = false;
+bool goalReached = false;
 float cameraHeight = 0.195; // 19.5 cm
 
 // state machine states
@@ -167,16 +168,16 @@ void mobilityStateMachine(const ros::TimerEvent&) {
 				stateMachineMsg.data = "TRANSFORMING";
 				//If angle between current and goal is significant
 				if (fabs(angles::shortest_angular_distance(currentLocation.theta, goalLocation.theta)) > 0.10) {
-                    if(movingTowardsTag) {
+                    //if(movingTowardsTag) {
                         ROS_ERROR_STREAM("manny Moving towards apriltag...");
-                    }
+                    //}
 					stateMachineState = STATE_MACHINE_ROTATE; //rotate
 				}
 				//If goal has not yet been reached
 				else if (fabs(angles::shortest_angular_distance(currentLocation.theta, atan2(goalLocation.y - currentLocation.y, goalLocation.x - currentLocation.x))) < M_PI_2) {
-                    if(movingTowardsTag) {
+                    //if(movingTowardsTag) {
                         ROS_ERROR_STREAM("manny Moving towards apriltag...");
-                    }
+                    //}
 					stateMachineState = STATE_MACHINE_TRANSLATE; //translate
 				}
 				//If returning with a target
@@ -200,19 +201,20 @@ void mobilityStateMachine(const ros::TimerEvent&) {
 				//Otherwise, assign a new goal
 				else {
 
-                    if(movingTowardsTag) {
+                    //if(movingTowardsTag) {
                         //movingTowardsTag = false;
                         setVelocity(0.0, 0.0);
                         ROS_ERROR_STREAM("manny GOAL REACHED!");
                         ROS_ERROR_STREAM("manny Current Pose: (" << currentLocation.x << ", " << currentLocation.y << ", " << currentLocation.theta << ")");
-                    } else {
+                        goalReached = true;
+                    //} else {
 					 ////select new heading from Gaussian distribution around current heading
-					goalLocation.theta = rng->gaussian(currentLocation.theta, 0.25);
+					//goalLocation.theta = rng->gaussian(currentLocation.theta, 0.25);
 					
-					////select new position 50 cm from current location
-					goalLocation.x = currentLocation.x + (0.5 * cos(goalLocation.theta));
-					goalLocation.y = currentLocation.y + (0.5 * sin(goalLocation.theta));
-                    }
+					//////select new position 50 cm from current location
+					//goalLocation.x = currentLocation.x + (0.5 * cos(goalLocation.theta));
+					//goalLocation.y = currentLocation.y + (0.5 * sin(goalLocation.theta));
+                    //}
 				}
 				
 				//Purposefully fall through to next case without breaking
@@ -223,6 +225,7 @@ void mobilityStateMachine(const ros::TimerEvent&) {
 			//Stay in this state until angle is minimized
 			case STATE_MACHINE_ROTATE: {
 				stateMachineMsg.data = "ROTATING";
+                ROS_ERROR_STREAM("manny Moving towards apriltag...");
 			    if (angles::shortest_angular_distance(currentLocation.theta, goalLocation.theta) > 0.1) {
 					setVelocity(0.0, 0.2); //rotate left
 			    }
@@ -241,6 +244,7 @@ void mobilityStateMachine(const ros::TimerEvent&) {
 			//Stay in this state until angle is at least PI/2
 			case STATE_MACHINE_TRANSLATE: {
 				stateMachineMsg.data = "TRANSLATING";
+                ROS_ERROR_STREAM("manny Moving towards apriltag...");
 				if (fabs(angles::shortest_angular_distance(currentLocation.theta, atan2(goalLocation.y - currentLocation.y, goalLocation.x - currentLocation.x))) < M_PI_2) {
 					setVelocity(0.15, 0.0);
 				}
@@ -289,7 +293,7 @@ void setVelocity(double linearVel, double angularVel)
 
 void targetHandler(const apriltags_ros::AprilTagDetectionArray::ConstPtr& message) {
 
-    if(message->detections.size() > 0 && currentLocation.theta != 0) {
+    if(message->detections.size() > 0 && currentLocation.theta != 0 && !goalReached) {
         //if(movingTowardsTag == false) {
 
             //movingTowardsTag = true;
@@ -320,12 +324,12 @@ void targetHandler(const apriltags_ros::AprilTagDetectionArray::ConstPtr& messag
 
             goalLocation.x =  aprilTagLocation.x;
             goalLocation.y = aprilTagLocation.y;
-            goalLocation.theta = aprilTagLocation.theta;
+            goalLocation.theta = atan2(aprilTagLocation.y - currentLocation.y, aprilTagLocation.x - currentLocation.x);
             
             ROS_ERROR_STREAM("manny Current Pose: (" << currentLocation.x << ", " << currentLocation.y << ", " << currentLocation.theta << ")");
             ROS_ERROR_STREAM("manny AprilTag Pose: (" << aprilTagLocation.x << ", " << aprilTagLocation.y << ", " << aprilTagLocation.theta << ")");
             ROS_ERROR_STREAM("manny Tag ID: " << targetDetected.data);
-            ROS_ERROR_STREAM("manny Distance of tag from discovery " << sqrt(pow(aprilTagLocation.x, 2) + pow(aprilTagLocation.y, 2)));
+            ROS_ERROR_STREAM("manny Distance of tag from discovery " << sqrt(pow(aprilTagLocation.x, 2) + pow(aprilTagLocation.y, 2)) << " m");
             
         //}
         ////if this is the goal target
