@@ -242,7 +242,7 @@ void mobilityStateMachine(const ros::TimerEvent&) {
 			case STATE_MACHINE_TRANSLATE: {
 				stateMachineMsg.data = "TRANSLATING";
 				if (fabs(angles::shortest_angular_distance(currentLocation.theta, atan2(goalLocation.y - currentLocation.y, goalLocation.x - currentLocation.x))) < M_PI_2) {
-					setVelocity(0.1, 0.0);
+					setVelocity(0.15, 0.0);
 				}
 				else {
 					setVelocity(0.0, 0.0); //stop
@@ -298,14 +298,15 @@ void targetHandler(const apriltags_ros::AprilTagDetectionArray::ConstPtr& messag
             // z is the 3D vector pointing to the april tag as a scalar value 
             // x is the x value relative to the rover of the tag
             // r is the vector projected to the ground as a 2D scalar value
-            float r, z, x;
+            float relative_angle, r, z, x;
             z = message->detections[0].pose.pose.position.z;
             x = message->detections[0].pose.pose.position.x;
             r = sqrt( pow(z, 2) - pow(cameraHeight, 2));
+            relative_angle = -1 * asin(x / r);
 
-            aprilTagLocation.x = r * cos(currentLocation.theta) + currentLocation.x -0.03;
-            aprilTagLocation.y = r * sin(currentLocation.theta) + currentLocation.y + 0.12;
-            aprilTagLocation.theta = currentLocation.theta - asin(x / r);
+            aprilTagLocation.x = r * cos(currentLocation.theta + relative_angle) + currentLocation.x -0.03;
+            aprilTagLocation.y = r * sin(currentLocation.theta + relative_angle) + currentLocation.y + 0.12;
+            aprilTagLocation.theta = currentLocation.theta + relative_angle;
 
             if(aprilTagLocation.theta > M_PI) {
 
@@ -324,6 +325,7 @@ void targetHandler(const apriltags_ros::AprilTagDetectionArray::ConstPtr& messag
             ROS_ERROR_STREAM("manny Current Pose: (" << currentLocation.x << ", " << currentLocation.y << ", " << currentLocation.theta << ")");
             ROS_ERROR_STREAM("manny AprilTag Pose: (" << aprilTagLocation.x << ", " << aprilTagLocation.y << ", " << aprilTagLocation.theta << ")");
             ROS_ERROR_STREAM("manny Tag ID: " << targetDetected.data);
+            ROS_ERROR_STREAM("manny Distance of tag from discovery " << sqrt(pow(aprilTagLocation.x, 2) + pow(aprilTagLocation.y, 2)));
             
         //}
         ////if this is the goal target
