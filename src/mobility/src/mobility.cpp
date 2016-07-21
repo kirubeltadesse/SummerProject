@@ -1,4 +1,5 @@
 #include <ros/ros.h>
+#include <math.h>
 
 //ROS libraries
 #include <angles/angles.h>
@@ -14,12 +15,12 @@
 #include <geometry_msgs/Pose2D.h>
 #include <geometry_msgs/Twist.h>
 #include <nav_msgs/Odometry.h>
+#include <apriltags_ros/AprilTagDetectionArray.h>
 
 //Custom messages
 #include <shared_messages/TagsImage.h>
 
 // To handle shutdown signals so the node quits properly in response to "rosnode kill"
-#include <ros/ros.h>
 #include <signal.h>
 
 using namespace std;
@@ -37,12 +38,15 @@ void lowerWrist();  // Lower wrist to 50 degrees
 //Numeric Variables
 geometry_msgs::Pose2D currentLocation;
 geometry_msgs::Pose2D goalLocation;
+geometry_msgs::Pose2D aprilTagLocation;
 int currentMode = 0;
 float mobilityLoopTimeStep = 0.1; //time between the mobility loop calls
 float status_publish_interval = 5;
 float killSwitchTimeout = 10;
 std_msgs::Int16 targetDetected; //ID of the detected target
 bool targetsCollected [256] = {0}; //array of booleans indicating whether each target ID has been found
+bool movingTowardsTag = false;
+float cameraHeight = 0.195; // 19.5 cm
 
 // state machine states
 #define STATE_MACHINE_TRANSFORM	0
@@ -85,7 +89,7 @@ void sigintEventHandler(int signal);
 //Callback handlers
 void joyCmdHandler(const sensor_msgs::Joy::ConstPtr& message);
 void modeHandler(const std_msgs::UInt8::ConstPtr& message);
-void targetHandler(const shared_messages::TagsImage::ConstPtr& tagInfo);
+void targetHandler(const apriltags_ros::AprilTagDetectionArray::ConstPtr& message);
 void obstacleHandler(const std_msgs::UInt8::ConstPtr& message);
 void odometryHandler(const nav_msgs::Odometry::ConstPtr& message);
 void mobilityStateMachine(const ros::TimerEvent&);
@@ -123,7 +127,7 @@ int main(int argc, char **argv) {
 
     joySubscriber = mNH.subscribe((publishedName + "/joystick"), 10, joyCmdHandler);
     modeSubscriber = mNH.subscribe((publishedName + "/mode"), 1, modeHandler);
-    targetSubscriber = mNH.subscribe((publishedName + "/targets"), 10, targetHandler);
+    targetSubscriber = mNH.subscribe((publishedName + "/tag_detections"), 10, targetHandler);
     obstacleSubscriber = mNH.subscribe((publishedName + "/obstacle"), 10, obstacleHandler);
     odometrySubscriber = mNH.subscribe((publishedName + "/odom/ekf"), 10, odometryHandler);
     targetsCollectedSubscriber = mNH.subscribe(("targetsCollected"), 10, targetsCollectedHandler);
@@ -162,38 +166,53 @@ void mobilityStateMachine(const ros::TimerEvent&) {
 			case STATE_MACHINE_TRANSFORM: {
 				stateMachineMsg.data = "TRANSFORMING";
 				//If angle between current and goal is significant
-				if (fabs(angles::shortest_angular_distance(currentLocation.theta, goalLocation.theta)) > 0.1) {
+				if (fabs(angles::shortest_angular_distance(currentLocation.theta, goalLocation.theta)) > 0.10) {
+                    if(movingTowardsTag) {
+                        ROS_ERROR_STREAM("manny Moving towards apriltag...");
+                    }
 					stateMachineState = STATE_MACHINE_ROTATE; //rotate
 				}
 				//If goal has not yet been reached
 				else if (fabs(angles::shortest_angular_distance(currentLocation.theta, atan2(goalLocation.y - currentLocation.y, goalLocation.x - currentLocation.x))) < M_PI_2) {
+                    if(movingTowardsTag) {
+                        ROS_ERROR_STREAM("manny Moving towards apriltag...");
+                    }
 					stateMachineState = STATE_MACHINE_TRANSLATE; //translate
 				}
 				//If returning with a target
-				else if (targetDetected.data != -1) {
-					//If goal has not yet been reached
-					if (hypot(0.0 - currentLocation.x, 0.0 - currentLocation.y) > 0.5) {
-				        //set angle to center as goal heading
-						goalLocation.theta = M_PI + atan2(currentLocation.y, currentLocation.x);
-						
-						//set center as goal position
-						goalLocation.x = 0.0;
-						goalLocation.y = 0.0;
-					}
-					//Otherwise, reset target and select new random uniform heading
-					else {
-						targetDetected.data = -1;
-						goalLocation.theta = rng->uniformReal(0, 2 * M_PI);
-					}
-				}
+				//else if (targetDetected.data != -1) {
+                    //If goal has not yet been reached
+                    //if (hypot(0.0 - currentLocation.x, 0.0 - currentLocation.y) > 0.5) {
+                        ////set angle to center as goal heading
+                        //goalLocation.theta = M_PI + atan2(currentLocation.y, currentLocation.x);
+                        
+                        ////set center as goal position
+                        //goalLocation.x = 0.0;
+                        //goalLocation.y = 0.0;
+                    //}
+                    ////Otherwise, reset target and select new random uniform heading
+                    //else {
+                        
+                        //targetDetected.data = -1;
+                        //goalLocation.theta = rng->uniformReal(0, 2 * M_PI);
+                    //}
+				//}
 				//Otherwise, assign a new goal
 				else {
-					 //select new heading from Gaussian distribution around current heading
+
+                    if(movingTowardsTag) {
+                        //movingTowardsTag = false;
+                        setVelocity(0.0, 0.0);
+                        ROS_ERROR_STREAM("manny GOAL REACHED!");
+                        ROS_ERROR_STREAM("manny Current Pose: (" << currentLocation.x << ", " << currentLocation.y << ", " << currentLocation.theta << ")");
+                    } else {
+					 ////select new heading from Gaussian distribution around current heading
 					goalLocation.theta = rng->gaussian(currentLocation.theta, 0.25);
 					
-					//select new position 50 cm from current location
+					////select new position 50 cm from current location
 					goalLocation.x = currentLocation.x + (0.5 * cos(goalLocation.theta));
 					goalLocation.y = currentLocation.y + (0.5 * sin(goalLocation.theta));
+                    }
 				}
 				
 				//Purposefully fall through to next case without breaking
@@ -223,7 +242,7 @@ void mobilityStateMachine(const ros::TimerEvent&) {
 			case STATE_MACHINE_TRANSLATE: {
 				stateMachineMsg.data = "TRANSLATING";
 				if (fabs(angles::shortest_angular_distance(currentLocation.theta, atan2(goalLocation.y - currentLocation.y, goalLocation.x - currentLocation.x))) < M_PI_2) {
-					setVelocity(0.3, 0.0);
+					setVelocity(0.1, 0.0);
 				}
 				else {
 					setVelocity(0.0, 0.0); //stop
@@ -268,42 +287,70 @@ void setVelocity(double linearVel, double angularVel)
  * ROS CALLBACK HANDLERS
  ************************/
 
-void targetHandler(const shared_messages::TagsImage::ConstPtr& message) {
+void targetHandler(const apriltags_ros::AprilTagDetectionArray::ConstPtr& message) {
 
-	//if this is the goal target
-	if (message->tags.data[0] == 256) {
-		//if we were returning with a target
-	    if (targetDetected.data != -1) {
-			//publish to scoring code
-			targetDropOffPublish.publish(message->image);
-			targetDetected.data = -1;
-	    }
-	}
+    if(message->detections.size() > 0 && currentLocation.theta != 0) {
+        //if(movingTowardsTag == false) {
 
-	//if target has not previously been detected 
-	else if (targetDetected.data == -1) {
-        
-        //check if target has not yet been collected
-        if (!targetsCollected[message->tags.data[0]]) {
-			//copy target ID to class variable
-			targetDetected.data = message->tags.data[0];
-			
-	        //set angle to center as goal heading
-			goalLocation.theta = M_PI + atan2(currentLocation.y, currentLocation.x);
-			
-			//set center as goal position
-			goalLocation.x = 0.0;
-			goalLocation.y = 0.0;
-			
-			//publish detected target
-			targetCollectedPublish.publish(targetDetected);
+            //movingTowardsTag = true;
+            targetDetected.data =  message->detections[0].id;
 
-			//publish to scoring code
-			targetPickUpPublish.publish(message->image);
+            // z is the 3D vector pointing to the april tag as a scalar value 
+            // x is the x value relative to the rover of the tag
+            // r is the vector projected to the ground as a 2D scalar value
+            float r, z, x;
+            z = message->detections[0].pose.pose.position.z;
+            x = message->detections[0].pose.pose.position.x;
+            r = sqrt( pow(z, 2) - pow(cameraHeight, 2));
 
-			//switch to transform state to trigger return to center
-			stateMachineState = STATE_MACHINE_TRANSFORM;
-		}
+            aprilTagLocation.x = r * cos(currentLocation.theta) + currentLocation.x -0.03;
+            aprilTagLocation.y = r * sin(currentLocation.theta) + currentLocation.y + 0.12;
+            aprilTagLocation.theta = currentLocation.theta + asin(x / r);
+
+            goalLocation.x =  aprilTagLocation.x;
+            goalLocation.y = aprilTagLocation.y;
+            goalLocation.theta = aprilTagLocation.theta;
+            
+            ROS_ERROR_STREAM("manny Current Pose: (" << currentLocation.x << ", " << currentLocation.y << ", " << currentLocation.theta << ")");
+            ROS_ERROR_STREAM("manny AprilTag Pose: (" << aprilTagLocation.x << ", " << aprilTagLocation.y << ", " << aprilTagLocation.theta << ")");
+            ROS_ERROR_STREAM("manny Tag ID: " << targetDetected.data);
+            
+        //}
+        ////if this is the goal target
+        //if (message->detections[0].id == 256) {
+            ////if we were returning with a target
+            //if (targetDetected.data != -1) {
+                ////publish to scoring code
+                ////targetDropOffPublish.publish(message->image);
+                //targetDetected.data = -1;
+            //}
+        //}
+
+        ////if target has not previously been detected 
+        //else if (targetDetected.data == -1) {
+
+            ////check if target has not yet been collected
+            //if (!targetsCollected[message->detections[0].id]) {
+                ////copy target ID to class variable
+                //targetDetected.data = message->detections[0].id;
+
+                ////set angle to center as goal heading
+                //goalLocation.theta = M_PI + atan2(currentLocation.y, currentLocation.x);
+
+                ////set center as goal position
+                //goalLocation.x = 0.0;
+                //goalLocation.y = 0.0;
+
+                ////publish detected target
+                //targetCollectedPublish.publish(targetDetected);
+
+                ////publish to scoring code
+                ////targetPickUpPublish.publish(message->image);
+
+                ////switch to transform state to trigger return to center
+                //stateMachineState = STATE_MACHINE_TRANSFORM;
+            //}
+        //}
     }
 }
 
