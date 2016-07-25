@@ -11,6 +11,9 @@ pkill navsat_transform
 pkill ekf_localization
 pkill diagnostics
 pkill location_moniter
+pkill rover_tf_broadcast
+pkill rover_tf_listener
+pkill frame_tf_broadcaster
 
 #Point to ROS master on the network
 if [ -z "$1" ]
@@ -53,6 +56,9 @@ nohup rosrun mobility mobility &
 nohup rosrun target_detection target &
 nohup rosrun diagnostics diagnostics &
 nohup rosrun location_moniter location_moniter &
+nohup rosrun tf_tag_detection rover_tf_broadcast &
+nohup rosrun tf_tag_detection rover_tf_listener &
+nohup rosrun tf_tag_detection frame_tf_broadcaster &
 
 microcontrollerDevicePath=$(findDevicePath Arduino)
 if [ -z "$microcontrollerDevicePath" ]
@@ -81,6 +87,7 @@ rosparam set /$HOSTNAME\_EKF/imu0_config [false,false,false,false,false,true,fal
 nohup rosrun robot_localization ekf_localization_node _two_d_mode:=true __name:=$HOSTNAME\_EKF /odometry/filtered:=/$HOSTNAME/odom/ekf &
 
 rosparam set /$HOSTNAME/apriltag_detector/tag_family "36h11"
+#rosparam set rover_tf_broadcast $HOSTNAME
 rosparam set /$HOSTNAME/apriltag_detector/tag_descriptions "[{id: 25, size: 0.037}, {id: 237, size: 0.037}, {id: 233, size: 0.037}, {id: 18, size: 0.037}]"
 nohup rosrun apriltags_ros apriltag_detector_node __ns:=/$HOSTNAME /$HOSTNAME/image_rect:=/$HOSTNAME/camera/image /camera_info:=/usb_cam/camera_info &
 
@@ -101,6 +108,9 @@ while true; do
 	rosnode kill $HOSTNAME\_TARGET
 	rosnode kill $HOSTNAME\_DIAGNOSTICS
 	rosnode kill $HOSTNAME\_LOCATION_MONTER
+	rosnode kill rover_tf_broadcast
+	rosnode kill frame_tf_broadcaster
+	rosnode kill frame_tf_listenerer
 	rosnode kill $HOSTNAME\/apriltag_detector
     rosnode kill \/usb_cam
 

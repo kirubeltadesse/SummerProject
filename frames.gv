@@ -1,0 +1,12 @@
+digraph G {
+"gamma/odom" -> "gamma/base_link"[label="Broadcaster: /gamma_EKF\nAverage rate: 40.208 Hz\nMost recent transform: 1469232038.250 ( 0.008 sec old)\nBuffer length: 4.900 sec\n"];
+"head_camera" -> "tag_233"[label="Broadcaster: /gamma/apriltag_detector\nAverage rate: 1.806 Hz\nMost recent transform: 1469232037.213 ( 1.045 sec old)\nBuffer length: 4.429 sec\n"];
+edge [style=invis];
+ subgraph cluster_legend { style=bold; color=black; label ="view_frames Result";
+"Recorded at time: 1469232038.258"[ shape=plaintext ] ;
+ }->"gamma/odom";
+edge [style=invis];
+ subgraph cluster_legend { style=bold; color=black; label ="view_frames Result";
+"Recorded at time: 1469232038.258"[ shape=plaintext ] ;
+ }->"head_camera";
+}
