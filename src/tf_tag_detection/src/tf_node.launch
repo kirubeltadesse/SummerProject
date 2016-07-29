@@ -1,0 +1,5 @@
+<launch>
+<node pkg="tf_tag_detection" type="rover_tf_broadcast" args="/gamma" name="rover_tf_broadcast" />
+<node pkg="tf_tag_detection" type="rover_tf_listener" name="rover_tf_listener"/> 
+<node pkg="tf_tag_detection" type="frame_tf_listener" name="frame_tf_listener"/> 
+</launch>

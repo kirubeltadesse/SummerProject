@@ -1,22 +1,73 @@
-                ros::Rate rate(100);
-                while(node.ok()){
-                    tf::StampedTransform transform;
-                    try{
-                        listener.lookupTransform("from", "to", ros::Time(0), transform);
-                    }catch(tf::TransformException ex){
-                        ROS_ERROR("%s", ex.what());
-                        ros::Duration(1.0).sleep();
-                    }
+#include <ros/ros.h>
+#include <tf/transform_listener.h>
+#include <geometry_msgs/PoseStamped.h> //more info
+#include <apriltags_ros/AprilTagDetectionArray.h>
+#include <shared_messages/TagsImage.h>
+#include <std_msgs/String.h>
 
-                    geometry_msgs::Twist value; // naming a new value that will be assign to new distance
 
-                    // here you can set value = to what ever you desire
-                    // after assigning the x y theta or distance 
-                    // 
-                    // you can publish the new value below
-                    rover_val.publish(value);
+float x, y, z, Qx, Qy, Qz, Qw;
+void apriltagHandle(const apriltags_ros::AprilTagDetectionArray::ConstPtr& msg){
+    if(msg->detections.size() > 0) {
 
-                    rate.sleep();
-                }
-                return 0;
-                };
+    x = msg->detections[0].pose.pose.position.x;
+    y = msg->detections[0].pose.pose.position.y;
+    z = msg->detections[0].pose.pose.position.z; 
+    Qx = msg->detections[0].pose.pose.orientation.x;
+    Qy = msg->detections[0].pose.pose.orientation.y;
+    Qz = msg->detections[0].pose.pose.orientation.z;
+    Qw = msg->detections[0].pose.pose.orientation.w;
+    } else {
+        ROS_ERROR_STREAM("tag_detections topic is passing empty array!");
+    }
+
+//    ROS_INFO_STREAM(" In The ApriltagHandle X :"<< msg->detections[0].pose.pose.position.x <<" Y :"<< y <<" Z :"<<z);
+}
+
+void transformPose(const tf::TransformListener& listener){
+    //obtaining the pose in the camera frame that will be transformed to 
+    geometry_msgs::PoseStamped camera_pose;
+    camera_pose.header.frame_id = "head_camera";
+
+    camera_pose.pose.position.x =x;
+    camera_pose.pose.position.y =y;
+    camera_pose.pose.position.z =z;
+    camera_pose.pose.orientation.x = Qx;
+    camera_pose.pose.orientation.y = Qy;
+    camera_pose.pose.orientation.z = Qz;
+    camera_pose.pose.orientation.w = Qw;
+
+    ROS_DEBUG_STREAM("In the TransformPose function X :"<< x <<" Y :"<< y <<" Z :"<<z);
+    //using the most recent transform available
+    camera_pose.header.stamp = ros::Time();
+
+    //pose in the space camera frame
+
+    try{
+        geometry_msgs::PoseStamped base_pose;
+        listener.transformPose("gamma/base_link", camera_pose, base_pose);
+        ROS_INFO("camera_pose:(%.2f,%.2f,%.2f)------->base_pose:(%.2f,%.2f,%.2f) at time of %.2f",camera_pose.pose.position.x,camera_pose.pose.position.y,camera_pose.pose.position.z,base_pose.pose.position.x,base_pose.pose.position.y,base_pose.pose.position.z, base_pose.header.stamp.toSec());
+
+    }catch(tf::TransformException& ex){
+        ROS_ERROR("Received an exception trying to transform a pose from \"camera\" to \"base_link\": %s", ex.what()); } 
+}
+
+
+int main(int argc, char** argv){
+
+    ROS_ERROR_STREAM("X :"<< x <<" Y :"<< y <<" Z :"<<z);
+    ros::init(argc, argv, "rover_tf_listener");
+    ros::NodeHandle node;
+
+    //                ros::Publisher rover_val = node.advertise<????::???>("type/name", 10); //I need to publish the velocity
+
+    tf::TransformListener listener(ros::Duration(10));
+    ros::Subscriber aprilSubscriber = node.subscribe("gamma/tag_detections", 10, apriltagHandle);
+
+    //transform a pose 
+    ros::Timer timer = node.createTimer(ros::Duration(0.5), boost::bind(&transformPose, boost::ref(listener)));
+    ros::spin();
+
+};
+
+//figure out the frames that we want to transform between

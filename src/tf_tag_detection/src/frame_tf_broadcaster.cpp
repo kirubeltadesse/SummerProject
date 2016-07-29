@@ -11,9 +11,9 @@ int main(int argc, char** argv){
 
     ros::Rate rate(10.0);
     while (node.ok()){
-        transform.setOrigin(tf::Vector3(0.13,0.03,0.195));
-        transform.setRotation(tf::Quaternion(0,0,0,1));
-        br.sendTransform(tf::StampedTransform(transform, ros::Time::now(),"head_camera", "gamma/base_link" ));
+        transform.setOrigin(tf::Vector3(0.0, 0.25, 0.0));
+        transform.setRotation(tf::Quaternion(0, 0, 0, 1));
+        br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), "gamma/base_link", "gripper_link" ));
         rate.sleep();
     }
     return 0;

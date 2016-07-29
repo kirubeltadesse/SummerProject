@@ -1,10 +1,21 @@
 #include <ros/ros.h>
 #include <tf/transform_broadcaster.h>
+#include <apriltags_ros/AprilTagDetectionArray.h>
+
 
 char host[128];
 std::string rover_name;
 std::string hostname;
 
+void apriltags_Handler(const apriltags_ros::AprilTagDetectionArray::ConstPtr& msg){
+    static tf::TransformBroadcaster Br;
+    tf::Transform transform;
+    transform.setOrigin(tf::Vector3(0.13, 0.03, 0.195));
+    tf::Quaternion q;
+    q.setRPY(-2.36, 0, -M_PI_2);
+    transform.setRotation(q);
+    Br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), "gamma/base_link", "head_camera"));
+}
 
 int main(int argc, char** argv){
     gethostname(host, sizeof(host));
@@ -18,18 +29,11 @@ int main(int argc, char** argv){
       /*  return -1*/;}else{
             rover_name = gamma;}
 
+    ROS_INFO_STREAM("Inside the main function");
     ros::NodeHandle node;
-    ros::Rate r(100);
-    tf::TransformBroadcaster broadcaster;
-    while(node.ok()){
-        broadcaster.sendTransform(
-                tf::StampedTransform(
-                    tf::Transform(tf::createQuaternionFromRPY(0, 0, M_PI/2), tf::Vector3(0.13,0.03,0.195)),                     ros::Time::now(), "gamma/base_link" , "head_camera")); //gamma/base_like needs modification
-        r.sleep();
-    }
-    // ros::Subscriber sub = node.subscribe(rover_name+"/odom", 10, &poseCallback);
- //   ros::spin();
-    return 0;
+    ros::Subscriber apriltagsSubscriber = node.subscribe("/gamma/tag_detections", 10, apriltags_Handler);
+    ros::spin();
+   return 0;
 };
 
 

@@ -7,8 +7,10 @@ project(tf_tag_detection)
 find_package(catkin REQUIRED COMPONENTS
   geometry_msgs
   nav_msgs
+  std_msgs
   roscpp
   rospy
+  apriltags_ros
   tf
 )
 

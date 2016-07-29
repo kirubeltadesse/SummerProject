@@ -38,7 +38,7 @@ int main(int argc, char** argv){
   while(node.ok()){
       broadcaster.sendTransform(
               tf::StampedTransform(
-                  tf::Transform(tf::Quaternion(0, 0, 0, 1), tf::Vector3(0.13,0.03,0.195)), 
+                  tf::Transform(tf::createQuaternionFromRPY(0, 0, M_PI/2), tf::Vector3(0.13,0.03,0.195)), 
                   ros::Time::now(), "gamma/base_link" , "head_camera")); //gamma/base_like needs modification
       r.sleep();
   }
