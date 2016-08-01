@@ -43,6 +43,7 @@ void CameraFrame::paintEvent(QPaintEvent* event)
 
             painter.setPen(Qt::white);
 
+<<<<<<< HEAD
             target_corners_1.clear();
             target_corners_2.clear();
             target_corners_3.clear();
@@ -50,6 +51,15 @@ void CameraFrame::paintEvent(QPaintEvent* event)
 
         }
 
+=======
+        }
+
+        target_corners_1.clear();
+        target_corners_2.clear();
+        target_corners_3.clear();
+        target_corners_4.clear();
+
+>>>>>>> f805a5e48edcead4c4110d89ee9aa98239373429
     }
     else
     {

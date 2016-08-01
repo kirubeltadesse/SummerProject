@@ -487,20 +487,52 @@ void closeFingers()
    fingerAnglePublish.publish(msg);
 }
 
+<<<<<<< HEAD
 void raiseWrist()
 {
    // Return wrist back to neutral position at 0 degrees
    std_msgs::Int16 msg;
    msg.data = 0;
    wristAnglePublish.publish(msg);
+=======
+void openFingers()
+{
+    // Opens fingers/claw to 50 degrees
+    std_msgs::Int16 msg;
+    msg.data = 90;
+    fingerAnglePublish.publish(msg);
+}
+
+void closeFingers()
+{
+    // Close fingers to 0 degrees
+    std_msgs::Int16 msg;
+    msg.data = 0;
+    fingerAnglePublish.publish(msg);
+}
+
+void raiseWrist()
+{
+    // Return wrist back to neutral position at 0 degrees
+    std_msgs::Int16 msg;
+    msg.data = 0;
+    wristAnglePublish.publish(msg);
+>>>>>>> f805a5e48edcead4c4110d89ee9aa98239373429
 }
 
 void lowerWrist()
 {
+<<<<<<< HEAD
    // Lowers wrist to just above the ground at 50 degrees
    std_msgs::Int16 msg;
    msg.data = 50;
    wristAnglePublish.publish(msg);
+=======
+    // Lowers wrist to just above the ground at 50 degrees
+    std_msgs::Int16 msg;
+    msg.data = 50;
+    wristAnglePublish.publish(msg);
+>>>>>>> f805a5e48edcead4c4110d89ee9aa98239373429
 }
 
 
