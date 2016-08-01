@@ -18,6 +18,7 @@ void apriltagHandle(const apriltags_ros::AprilTagDetectionArray::ConstPtr& msg){
         Qw = msg->detections[0].pose.pose.orientation.w;
     } else {
         ROS_ERROR_STREAM("tag_detections topic is passing empty array!");
+        x=y=z=0; //publish zero's since the tag is out of sight
     }
 
     //    ROS_INFO_STREAM(" In The ApriltagHandle X :"<< msg->detections[0].pose.pose.position.x <<" Y :"<< y <<" Z :"<<z);

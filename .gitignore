@@ -1,6 +1,7 @@
 *~
 \#*#
 build
+nohup.out
 devel
 src/rqt_rover_gui/CMakeLists.txt.user*
 *.swp

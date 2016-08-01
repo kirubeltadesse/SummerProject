@@ -296,7 +296,7 @@ void targetHandler(const geometry_msgs::PoseStamped::ConstPtr& message) {
 
    goalLocation.x = message->pose.position.x;
    goalLocation.y = message->pose.position.y;
-   goalLocation.theta = atan2(message->pose.position.y,message->pose.position.x);
+   goalLocation.theta = atan2(message->pose.position.y - currentLocation.y, message->pose.position.x-currentLocation.x);
 
    ROS_ERROR_STREAM("Kirubel current Pose: (" << currentLocation.x << ", " << currentLocation.y << ", " << currentLocation.theta << ")");
    ROS_ERROR_STREAM("Kirubel Pose: (" << message->pose.position.x << ", " << message->pose.position.y << ", " << goalLocation.theta << ")");
